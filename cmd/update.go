@@ -31,10 +31,7 @@ func UpdateAction(ctx *cli.Context) {
 	name := args[0]
 
 	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key, err := foundation.GetKey(foundation.KeyPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	key := foundation.GetKey(foundation.KeyPath)
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
 	conns, err := connection.Load(key, foundation.StorePath)

@@ -49,13 +49,13 @@ func Decrypt(key []byte, encrypted string) ([]byte, error) {
 	return dst, nil
 }
 
-func GetKey(path string) ([]byte, error) {
+func GetKey(path string) []byte {
 	p, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, err
+		PrintError("Failed read AES key file")
 	}
 
-	return GenKey(p), nil
+	return GenKey(p)
 }
 
 func GenKey(src []byte) []byte {

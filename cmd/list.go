@@ -24,10 +24,7 @@ func ListAction(ctx *cli.Context) {
 	validation.ExistConfig()
 
 	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key, err := foundation.GetKey(foundation.KeyPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	key := foundation.GetKey(foundation.KeyPath)
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
 	connections, err := connection.Load(key, foundation.StorePath)
