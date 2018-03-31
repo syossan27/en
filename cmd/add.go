@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"crypto/sha256"
-	"io/ioutil"
-
 	"github.com/Songmu/prompter"
 	"github.com/fatih/color"
 	"github.com/labstack/gommon/log"
@@ -51,7 +48,7 @@ func NewAction(ctx *cli.Context) {
 	conn := connection.New(name, accessPoint, user, password)
 
 	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key, err := GetKey(foundation.KeyPath)
+	key, err := foundation.GetKey(foundation.KeyPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -67,19 +64,4 @@ func NewAction(ctx *cli.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-// TODO: GenKeyとGetKeyは共通処理なので分ける？
-func GetKey(path string) ([]byte, error) {
-	p, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	return GenKey(p), nil
-}
-
-func GenKey(src []byte) []byte {
-	hash := sha256.Sum256(src)
-	return hash[:]
 }

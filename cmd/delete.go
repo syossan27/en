@@ -27,7 +27,7 @@ func DeleteAction(ctx *cli.Context) {
 	name := args[0]
 
 	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key, err := GetKey(foundation.KeyPath)
+	key, err := foundation.GetKey(foundation.KeyPath)
 	if err != nil {
 		log.Fatal(err)
 	}

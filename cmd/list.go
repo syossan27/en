@@ -24,7 +24,7 @@ func ListAction(ctx *cli.Context) {
 	validation.ExistConfig()
 
 	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key, err := GetKey(foundation.KeyPath)
+	key, err := foundation.GetKey(foundation.KeyPath)
 	if err != nil {
 		log.Fatal(err)
 	}

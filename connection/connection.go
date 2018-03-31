@@ -1,17 +1,14 @@
 package connection
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"encoding/base64"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"time"
+
+	"github.com/syossan27/en/foundation"
 
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"
@@ -135,7 +132,7 @@ func Load(key []byte, path string) (Connections, error) {
 	}
 
 	// 内容を復号
-	dec, err := Decrypt(key, string(p))
+	dec, err := foundation.Decrypt(key, string(p))
 	if err != nil {
 		return nil, err
 	}
@@ -148,26 +145,6 @@ func Load(key []byte, path string) (Connections, error) {
 	}
 
 	return cs, nil
-}
-
-// AES-256で復号
-func Decrypt(key []byte, encrypted string) ([]byte, error) {
-	data, err := base64.StdEncoding.DecodeString(encrypted)
-	if err != nil {
-		return nil, err
-	}
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-
-	iv := data[:aes.BlockSize]
-	src := data[aes.BlockSize:]
-	dst := make([]byte, len(src))
-	stream := cipher.NewCTR(block, iv)
-	stream.XORKeyStream(dst, src)
-
-	return dst, nil
 }
 
 func (cs *Connections) Add(c *Connection, key []byte, path string) error {
@@ -203,7 +180,7 @@ func save(cs *Connections, key []byte, path string) error {
 	}
 
 	// yaml化したコネクション構造体群を暗号化
-	enc, err := Encrypt(key, p)
+	enc, err := foundation.Encrypt(key, p)
 	if err != nil {
 		return err
 	}
@@ -221,23 +198,4 @@ func (cs Connections) Exist(name string) bool {
 		}
 	}
 	return false
-}
-
-// テキストをAES-256で暗号化して、base64でエンコード
-func Encrypt(key []byte, data []byte) (string, error) {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-
-	cipherText := make([]byte, aes.BlockSize+len(data))
-	iv := cipherText[:aes.BlockSize]
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
-	}
-
-	stream := cipher.NewCTR(block, iv)
-	stream.XORKeyStream(cipherText[aes.BlockSize:], data)
-	encoded := base64.StdEncoding.EncodeToString(cipherText)
-	return encoded, nil
 }
