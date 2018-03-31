@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/syossan27/en/connection"
 	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
@@ -10,9 +8,7 @@ import (
 )
 
 func Connect(ctx *cli.Context) {
-	if err := foundation.ExistConfig(); err != nil {
-		log.Fatal(err)
-	}
+	validation.ExistConfig()
 
 	// 引数の確認
 	args := ctx.Args()

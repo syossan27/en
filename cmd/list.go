@@ -8,6 +8,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/syossan27/en/connection"
 	"github.com/syossan27/en/foundation"
+	"github.com/syossan27/en/validation"
 	"github.com/urfave/cli"
 )
 
@@ -20,9 +21,7 @@ func List() cli.Command {
 	}
 }
 func ListAction(ctx *cli.Context) {
-	if err := foundation.ExistConfig(); err != nil {
-		log.Fatal(err)
-	}
+	validation.ExistConfig()
 
 	// キーファイル（.ssh/id_rsa）からAESキー取得
 	key, err := GetKey(foundation.KeyPath)

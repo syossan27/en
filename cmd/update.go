@@ -7,6 +7,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/syossan27/en/connection"
 	"github.com/syossan27/en/foundation"
+	"github.com/syossan27/en/validation"
 	"github.com/urfave/cli"
 )
 
@@ -19,9 +20,7 @@ func Update() cli.Command {
 	}
 }
 func UpdateAction(ctx *cli.Context) {
-	if err := foundation.ExistConfig(); err != nil {
-		log.Fatal(err)
-	}
+	validation.ExistConfig()
 
 	// 引数の確認
 	args := ctx.Args()

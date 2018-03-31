@@ -19,9 +19,7 @@ func Delete() cli.Command {
 	}
 }
 func DeleteAction(ctx *cli.Context) {
-	if err := foundation.ExistConfig(); err != nil {
-		log.Fatal(err)
-	}
+	validation.ExistConfig()
 
 	// 引数の確認
 	args := ctx.Args()
