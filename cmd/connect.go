@@ -15,11 +15,8 @@ func Connect(ctx *cli.Context) {
 	validation.ValidateArgs(args)
 	name := args[0]
 
-	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key := foundation.GetKey(foundation.KeyPath)
-
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	conns, err := connection.Load(key, foundation.StorePath)
+	conns, err := connection.Load()
 	if err != nil {
 		foundation.PrintError("Failed decrypt store file")
 	}

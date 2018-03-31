@@ -7,7 +7,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 	"github.com/syossan27/en/connection"
-	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
 	"github.com/urfave/cli"
 )
@@ -23,11 +22,8 @@ func List() cli.Command {
 func ListAction(ctx *cli.Context) {
 	validation.ExistConfig()
 
-	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key := foundation.GetKey(foundation.KeyPath)
-
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	connections, err := connection.Load(key, foundation.StorePath)
+	connections, err := connection.Load()
 	if err != nil {
 		log.Fatal(err)
 	}

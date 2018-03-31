@@ -120,9 +120,12 @@ func New(name, accessPoint, user, password string) *Connection {
 }
 
 // 保存ファイルから復号して内容を返す
-func Load(key []byte, path string) (Connections, error) {
+func Load() (Connections, error) {
+	// キーファイル（.ssh/id_rsa）からAESキー取得
+	key := foundation.GetKey(foundation.KeyPath)
+
 	// 保存ファイルから内容を取得
-	p, err := ioutil.ReadFile(path)
+	p, err := ioutil.ReadFile(foundation.StorePath)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +151,7 @@ func Load(key []byte, path string) (Connections, error) {
 	return cs, nil
 }
 
-func (cs *Connections) Add(c *Connection, key []byte, path string) error {
+func (cs *Connections) Add(c *Connection) error {
 	// 同じコネクション名があった場合、エラー
 	if cs.Exist(c.Name) {
 		return errors.New("connection name already exists")
@@ -157,11 +160,11 @@ func (cs *Connections) Add(c *Connection, key []byte, path string) error {
 	// コネクション構造体群にコネクション構造体を追加
 	*cs = append(*cs, *c)
 
-	err := save(cs, key, path)
+	err := save(cs)
 	return err
 }
 
-func (cs *Connections) Update(name string, key []byte, path string) error {
+func (cs *Connections) Update(name string) error {
 	// コネクション構造体群の中に更新対象のコネクションがあるか確認
 	conns := *cs
 	for key, conn := range conns {
@@ -181,11 +184,11 @@ func (cs *Connections) Update(name string, key []byte, path string) error {
 		}
 	}
 
-	err := save(&conns, key, path)
+	err := save(&conns)
 	return err
 }
 
-func (cs *Connections) Delete(name string, key []byte) error {
+func (cs *Connections) Delete(name string) error {
 	// コネクション構造体群の中に更新対象のコネクションがあるか確認
 	newConns := make(Connections, len(*cs)-1)
 	for _, conn := range *cs {
@@ -195,7 +198,7 @@ func (cs *Connections) Delete(name string, key []byte) error {
 	}
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
-	err := save(&newConns, key, foundation.StorePath)
+	err := save(&newConns)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -203,9 +206,12 @@ func (cs *Connections) Delete(name string, key []byte) error {
 	return err
 }
 
-func save(cs *Connections, key []byte, path string) error {
+func save(cs *Connections) error {
+	// キーファイル（.ssh/id_rsa）からAESキー取得
+	key := foundation.GetKey(foundation.KeyPath)
+
 	// 保存ファイルを開く
-	f, err := os.Create(path)
+	f, err := os.Create(foundation.StorePath)
 	if err != nil {
 		return err
 	}

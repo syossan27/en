@@ -32,17 +32,14 @@ func AddAction(ctx *cli.Context) {
 	// コネクション構造体の作成
 	conn := connection.New(name, accessPoint, user, password)
 
-	// キーファイル（.ssh/id_rsa）からAESキー取得
-	key := foundation.GetKey(foundation.KeyPath)
-
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	conns, err := connection.Load(key, foundation.StorePath)
+	conns, err := connection.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
-	err = conns.Add(conn, key, foundation.StorePath)
+	err = conns.Add(conn)
 	if err != nil {
 		log.Fatal(err)
 	}
