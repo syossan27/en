@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Songmu/prompter"
 	"github.com/syossan27/en/foundation"
 
 	"golang.org/x/crypto/ssh"
@@ -160,8 +161,27 @@ func (cs *Connections) Add(c *Connection, key []byte, path string) error {
 	return err
 }
 
-func (cs *Connections) Update(key []byte, path string) error {
-	err := save(cs, key, path)
+func (cs *Connections) Update(name string, key []byte, path string) error {
+	// コネクション構造体群の中に更新対象のコネクションがあるか確認
+	conns := *cs
+	for key, conn := range conns {
+		if conn.Name == name {
+			// 更新内容をプロンプトで取得
+			var accessPoint = prompter.Prompt("AccessPoint", conn.AccessPoint)
+			var user = prompter.Prompt("User", conn.User)
+			var password = prompter.Password("Password")
+			if password == "" {
+				password = conn.Password
+			}
+			conns[key].AccessPoint = accessPoint
+			conns[key].User = user
+			conns[key].Password = password
+
+			break
+		}
+	}
+
+	err := save(&conns, key, path)
 	return err
 }
 
@@ -175,7 +195,7 @@ func (cs *Connections) Delete(name string, key []byte) error {
 	}
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
-	err := newConns.Update(key, foundation.StorePath)
+	err := save(&newConns, key, foundation.StorePath)
 	if err != nil {
 		log.Fatal(err)
 	}
