@@ -20,7 +20,7 @@ func makeApp() *cli.App {
 
 	app.Action = cmd.Connect
 	app.Commands = []cli.Command{
-		cmd.New(),
+		cmd.Add(),
 		cmd.Update(),
 		cmd.Delete(),
 		cmd.List(),

@@ -12,11 +12,11 @@ import (
 	"github.com/urfave/cli"
 )
 
-func New() cli.Command {
+func Add() cli.Command {
 	return cli.Command{
-		Name:    "new",
-		Aliases: []string{"n"},
-		Usage:   "en new hoge",
+		Name:    "add",
+		Aliases: []string{"a"},
+		Usage:   "en add hoge",
 		Action:  NewAction,
 	}
 }
