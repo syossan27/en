@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"github.com/Songmu/prompter"
-	"github.com/fatih/color"
 	"github.com/labstack/gommon/log"
 	"github.com/syossan27/en/connection"
 	"github.com/syossan27/en/foundation"
+	"github.com/syossan27/en/validation"
 	"github.com/urfave/cli"
 )
 
@@ -14,35 +14,20 @@ func Add() cli.Command {
 		Name:    "add",
 		Aliases: []string{"a"},
 		Usage:   "en add hoge",
-		Action:  NewAction,
+		Action:  AddAction,
 	}
 }
-func NewAction(ctx *cli.Context) {
+func AddAction(ctx *cli.Context) {
 	if err := foundation.MakeConfig(); err != nil {
 		log.Fatal(err)
 	}
 
 	// 引数の確認
 	args := ctx.Args()
-	if len(args) > 1 {
-		color.Red("Error: Too many arguments")
-		cli.OsExiter(1)
-	}
+	validation.ValidateArgs(args)
 	name := args[0]
 
-	// プロンプトで取得
-	var accessPoint = prompter.Prompt("AccessPoint", "")
-	if accessPoint == "" {
-		log.Fatal("Error: Invalid AccessPoint")
-	}
-	var user = prompter.Prompt("User", "")
-	if user == "" {
-		log.Fatal("Error: Invalid User")
-	}
-	var password = prompter.Password("Password")
-	if password == "" {
-		log.Fatal("Error: Invalid Password")
-	}
+	accessPoint, user, password := input()
 
 	// コネクション構造体の作成
 	conn := connection.New(name, accessPoint, user, password)
@@ -64,4 +49,24 @@ func NewAction(ctx *cli.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// プロンプトで取得
+func input() (string, string, string) {
+	var accessPoint = prompter.Prompt("AccessPoint", "")
+	if accessPoint == "" {
+		foundation.PrintError("Invalid AccessPoint")
+	}
+
+	var user = prompter.Prompt("User", "")
+	if user == "" {
+		foundation.PrintError("Invalid User")
+	}
+
+	var password = prompter.Password("Password")
+	if password == "" {
+		foundation.PrintError("Invalid Password")
+	}
+
+	return accessPoint, user, password
 }
