@@ -165,6 +165,24 @@ func (cs *Connections) Update(key []byte, path string) error {
 	return err
 }
 
+func (cs *Connections) Delete(name string, key []byte) error {
+	// コネクション構造体群の中に更新対象のコネクションがあるか確認
+	newConns := make(Connections, len(*cs)-1)
+	for _, conn := range *cs {
+		if conn.Name != name {
+			newConns = append(newConns, conn)
+		}
+	}
+
+	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
+	err := newConns.Update(key, foundation.StorePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return err
+}
+
 func save(cs *Connections, key []byte, path string) error {
 	// 保存ファイルを開く
 	f, err := os.Create(path)
