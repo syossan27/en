@@ -7,6 +7,6 @@ import (
 )
 
 func PrintError(msg string) {
-	color.Red("Error: ", msg)
+	color.Red("Error: " + msg)
 	os.Exit(1)
 }

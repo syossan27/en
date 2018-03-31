@@ -19,7 +19,7 @@ func List() cli.Command {
 		Action:  ListAction,
 	}
 }
-func ListAction() {
+func ListAction(ctx *cli.Context) {
 	if err := foundation.ExistConfig(); err != nil {
 		log.Fatal(err)
 	}
@@ -37,7 +37,7 @@ func ListAction() {
 	}
 
 	if len(connections) == 0 {
-		color.Red("Not register connect setting")
+		color.Red("No connection")
 		return
 	}
 
