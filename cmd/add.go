@@ -63,7 +63,7 @@ func NewAction(ctx *cli.Context) {
 	}
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
-	err = conns.Save(conn, key, foundation.StorePath)
+	err = conns.Add(conn, key, foundation.StorePath)
 	if err != nil {
 		log.Fatal(err)
 	}

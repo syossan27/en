@@ -171,21 +171,26 @@ func Decrypt(key []byte, encrypted string) ([]byte, error) {
 }
 
 // TODO: SaveというよりAdd? その場合Save処理を切り分けたほうがいいかも
-func (cs *Connections) Save(c *Connection, key []byte, path string) error {
+func (cs *Connections) Add(c *Connection, key []byte, path string) error {
 	// 同じコネクション名があった場合、エラー
 	if cs.Exist(c.Name) {
 		return errors.New("connection name already exists")
 	}
 
+	// コネクション構造体群にコネクション構造体を追加
+	*cs = append(*cs, *c)
+
+	err := save(cs, key, path)
+	return err
+}
+
+func save(cs *Connections, key []byte, path string) error {
 	// 保存ファイルを開く
 	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-
-	// コネクション構造体群にコネクション構造体を追加
-	*cs = append(*cs, *c)
 
 	// yaml化
 	p, err := yaml.Marshal(cs)
@@ -201,7 +206,6 @@ func (cs *Connections) Save(c *Connection, key []byte, path string) error {
 
 	// 保存ファイルに書き込み
 	f.WriteString(enc)
-
 	return nil
 }
 
