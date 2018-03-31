@@ -22,13 +22,13 @@ func Connect(ctx *cli.Context) {
 	}
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	connections, err := connection.Load(key, foundation.StorePath)
+	conns, err := connection.Load(key, foundation.StorePath)
 	if err != nil {
 		foundation.PrintError("Failed decrypt store file")
 	}
 
 	var specifiedConnection connection.Connection
-	for _, conn := range connections {
+	for _, conn := range conns {
 		if conn.Name == name {
 			specifiedConnection = conn
 		}
