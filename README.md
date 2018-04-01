@@ -4,14 +4,14 @@ en is smart ssh manager.
 
 ## Usage
 
-### Create
+### Add
 
 ```
-$ en new [ssh name]
+$ en add [ssh name]
 Host: [host]
 User: [user]
 Password: ******
-Create Successfully!
+👍 Add Successful
 ```
 
 ### Connect
@@ -19,14 +19,14 @@ Create Successfully!
 ```
 $ en [ssh name]
 
-# connect ssh
+# Connecting via SSH
 ```
 
 ### Delete
 
 ```
 $ en delete [ssh name]
-Delete Successfully!
+👍 Delete Successful
 ```
 
 
@@ -37,7 +37,7 @@ $ en update [ssh name]
 Host(Default: [Change before host]): [host]
 User(Default: [Change before user]): [user]
 Password(Default: [Change before password]): ******
-Update Successfully!
+👍 Update Successful
 ```
 
 ## LoadMap
