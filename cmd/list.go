@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"os"
-
-	"github.com/olekukonko/tablewriter"
 	"github.com/syossan27/en/connection"
 	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
@@ -28,21 +25,5 @@ func ListAction(ctx *cli.Context) {
 		foundation.PrintError("No connection")
 	}
 
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Name", "Host", "User", "Password"})
-
-	for _, conn := range conns {
-		if conn.Name == "" {
-			continue
-		}
-
-		table.Append([]string{
-			conn.Name,
-			conn.Host,
-			conn.User,
-			conn.Password,
-		})
-	}
-
-	table.Render()
+	conns.List()
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/olekukonko/tablewriter"
 	"github.com/syossan27/en/foundation"
 
 	"golang.org/x/crypto/ssh"
@@ -192,6 +193,26 @@ func (cs *Connections) Delete(name string) {
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
 	save(&newConns)
+}
+
+func (cs *Connections) List() {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Name", "Host", "User", "Password"})
+
+	for _, conn := range *cs {
+		if conn.Name == "" {
+			continue
+		}
+
+		table.Append([]string{
+			conn.Name,
+			conn.Host,
+			conn.User,
+			conn.Password,
+		})
+	}
+
+	table.Render()
 }
 
 // 同じコネクション名があるか確認
