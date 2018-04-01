@@ -18,14 +18,14 @@ func MakeConfig() {
 	if _, err := os.Stat(ConfigDirPath); err != nil {
 		err := os.Mkdir(ConfigDirPath, 0777)
 		if err != nil {
-			PrintError("Failed create .en directory")
+			PrintError("Failed to create .en directory")
 		}
 	}
 
 	if _, err := os.Stat(StorePath); err != nil {
 		_, err := os.Create(StorePath)
 		if err != nil {
-			PrintError("Failed create store file")
+			PrintError("Failed to create store file")
 		}
 	}
 }

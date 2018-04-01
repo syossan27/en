@@ -27,7 +27,7 @@ type Connections []Connection
 func (c *Connection) Connect() {
 	session, err := connect(c.User, c.Password, c.AccessPoint, 22)
 	if err != nil {
-		foundation.PrintError("Failed connect.\nReason: " + err.Error())
+		foundation.PrintError("Failed to connect.\nReason: " + err.Error())
 	}
 	defer session.Close()
 
@@ -36,7 +36,7 @@ func (c *Connection) Connect() {
 	fd := int(os.Stdin.Fd())
 	oldState, err := terminal.MakeRaw(fd)
 	if err != nil {
-		panic(err)
+		foundation.PrintError("Failed to put the terminal into raw mode")
 	}
 	defer terminal.Restore(fd, oldState)
 
@@ -47,7 +47,7 @@ func (c *Connection) Connect() {
 
 	termWidth, termHeight, err := terminal.GetSize(fd)
 	if err != nil {
-		panic(err)
+		foundation.PrintError("Failed to get terminal size")
 	}
 
 	// Set up terminal modes
@@ -126,7 +126,7 @@ func Load() Connections {
 	// 保存ファイルから内容を取得
 	p, err := ioutil.ReadFile(foundation.StorePath)
 	if err != nil {
-		foundation.PrintError("Failed read store file")
+		foundation.PrintError("Failed to read store file")
 	}
 
 	// 保存ファイル内容が空の場合
@@ -137,14 +137,14 @@ func Load() Connections {
 	// 内容を復号
 	dec, err := foundation.Decrypt(key, string(p))
 	if err != nil {
-		foundation.PrintError("Failed decrypt connections")
+		foundation.PrintError("Failed to decrypt connections")
 	}
 
 	// 復号した内容をyaml化
 	var cs Connections
 	err = yaml.Unmarshal(dec, &cs)
 	if err != nil {
-		foundation.PrintError("Failed unmarshal connections yaml")
+		foundation.PrintError("Failed to unmarshal connections yaml")
 	}
 
 	return cs
@@ -228,25 +228,25 @@ func save(cs *Connections) {
 	// 保存ファイルを開く
 	f, err := os.Create(foundation.StorePath)
 	if err != nil {
-		foundation.PrintError("Failed open store file")
+		foundation.PrintError("Failed to open store file")
 	}
 	defer f.Close()
 
 	// yaml化
 	p, err := yaml.Marshal(cs)
 	if err != nil {
-		foundation.PrintError("Failed marshal connections yaml")
+		foundation.PrintError("Failed to marshal connections yaml")
 	}
 
 	// yaml化したコネクション構造体群を暗号化
 	enc, err := foundation.Encrypt(key, p)
 	if err != nil {
-		foundation.PrintError("Failed encrypt connections")
+		foundation.PrintError("Failed to encrypt connections")
 	}
 
 	// 保存ファイルに書き込み
 	_, err = f.WriteString(enc)
 	if err != nil {
-		foundation.PrintError("Failed write string to store file")
+		foundation.PrintError("Failed to write string to store file")
 	}
 }

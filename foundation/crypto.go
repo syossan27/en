@@ -52,7 +52,7 @@ func Decrypt(key []byte, encrypted string) ([]byte, error) {
 func GetKey(path string) []byte {
 	p, err := ioutil.ReadFile(path)
 	if err != nil {
-		PrintError("Failed read AES key file")
+		PrintError("Failed to read AES key file")
 	}
 
 	return GenKey(p)
