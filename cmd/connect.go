@@ -21,15 +21,7 @@ func Connect(ctx *cli.Context) {
 		foundation.PrintError("Failed decrypt store file")
 	}
 
-	var specifiedConnection connection.Connection
-	for _, conn := range conns {
-		if conn.Name == name {
-			specifiedConnection = conn
-		}
-	}
-	if specifiedConnection == (connection.Connection{}) {
-		foundation.PrintError("Not found connect name")
-	}
-
-	specifiedConnection.Connect()
+	// コネクションを探して接続
+	FoundConn := conns.Find(name)
+	FoundConn.Connect()
 }

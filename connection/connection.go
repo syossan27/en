@@ -206,6 +206,29 @@ func (cs *Connections) Delete(name string) error {
 	return err
 }
 
+// 同じコネクション名があるか確認
+func (cs Connections) Exist(name string) bool {
+	for _, c := range cs {
+		if name == c.Name {
+			return true
+		}
+	}
+	return false
+}
+
+func (cs Connections) Find(name string) Connection {
+	var specifiedConn Connection
+	for _, conn := range cs {
+		if conn.Name == name {
+			specifiedConn = conn
+		}
+	}
+	if specifiedConn == (Connection{}) {
+		foundation.PrintError("Not found connect name")
+	}
+	return specifiedConn
+}
+
 func save(cs *Connections) error {
 	// キーファイル（.ssh/id_rsa）からAESキー取得
 	key := foundation.GetKey(foundation.KeyPath)
@@ -232,14 +255,4 @@ func save(cs *Connections) error {
 	// 保存ファイルに書き込み
 	f.WriteString(enc)
 	return nil
-}
-
-// 同じコネクション名があるか確認
-func (cs Connections) Exist(name string) bool {
-	for _, c := range cs {
-		if name == c.Name {
-			return true
-		}
-	}
-	return false
 }
