@@ -18,15 +18,14 @@ func Add() cli.Command {
 	}
 }
 func AddAction(ctx *cli.Context) {
-	if err := foundation.MakeConfig(); err != nil {
-		log.Fatal(err)
-	}
+	foundation.MakeConfig()
 
 	// 引数の確認
 	args := ctx.Args()
 	validation.ValidateArgs(args)
 	name := args[0]
 
+	// プロンプトで取得
 	accessPoint, user, password := input()
 
 	// コネクション構造体の作成
@@ -45,7 +44,6 @@ func AddAction(ctx *cli.Context) {
 	}
 }
 
-// プロンプトで取得
 func input() (string, string, string) {
 	var accessPoint = prompter.Prompt("AccessPoint", "")
 	if accessPoint == "" {
