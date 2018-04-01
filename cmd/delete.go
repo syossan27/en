@@ -11,7 +11,7 @@ func Delete() cli.Command {
 	return cli.Command{
 		Name:    "delete",
 		Aliases: []string{"d"},
-		Usage:   "en delete hoge",
+		Usage:   "en delete [connection name]",
 		Action:  DeleteAction,
 	}
 }

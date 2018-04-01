@@ -11,7 +11,7 @@ func Update() cli.Command {
 	return cli.Command{
 		Name:    "update",
 		Aliases: []string{"u"},
-		Usage:   "en update hoge",
+		Usage:   "en update [connection name]",
 		Action:  UpdateAction,
 	}
 }

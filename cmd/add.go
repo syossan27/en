@@ -12,7 +12,7 @@ func Add() cli.Command {
 	return cli.Command{
 		Name:    "add",
 		Aliases: []string{"a"},
-		Usage:   "en add hoge",
+		Usage:   "en add [connection name]",
 		Action:  AddAction,
 	}
 }

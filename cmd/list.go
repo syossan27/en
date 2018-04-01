@@ -14,7 +14,7 @@ func List() cli.Command {
 	return cli.Command{
 		Name:    "list",
 		Aliases: []string{"l"},
-		Usage:   "en list hoge",
+		Usage:   "en list",
 		Action:  ListAction,
 	}
 }
