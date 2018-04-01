@@ -16,7 +16,7 @@ func makeApp() *cli.App {
 	app := cli.NewApp()
 	app.Name = "en"
 	app.Usage = "en is smart ssh manager"
-	app.Version = "0.1"
+	app.Version = "0.0.1"
 
 	app.Action = cmd.Connect
 	app.Commands = []cli.Command{
