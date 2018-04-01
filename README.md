@@ -42,9 +42,7 @@ Password(Default: [Change before password]): ******
 
 ## LoadMap
 
-- 接続失敗時のエラーメッセージをもう少し良い感じに
 - 設定ファイル扱いたい
-  - ssh timeout
   - 設定ファイル読み込み先
 - 公開鍵認証に対応
 - 接続先の入力補完機能
