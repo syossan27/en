@@ -3,7 +3,6 @@ package connection
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"time"
 
@@ -28,7 +27,7 @@ type Connections []Connection
 func (c *Connection) Connect() {
 	session, err := connect(c.User, c.Password, c.AccessPoint, 22)
 	if err != nil {
-		log.Fatal(err)
+		foundation.PrintError("Failed connect.\nReason: " + err.Error())
 	}
 	defer session.Close()
 
@@ -60,17 +59,18 @@ func (c *Connection) Connect() {
 
 	// Request pseudo terminal
 	if err := session.RequestPty("xterm-256color", termHeight, termWidth, modes); err != nil {
-		log.Fatal(err)
+		foundation.PrintError("Failed to requests the association of a pty with the session")
 	}
 
 	err = session.Shell()
 	if err != nil {
-		log.Println(err)
+		foundation.PrintError("Failed to login shell")
 	}
 
 	err = session.Wait()
 	if err != nil {
-		log.Println(err)
+		foundation.PrintError("Failed to command completes successfully")
+
 	}
 }
 
