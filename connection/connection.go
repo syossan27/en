@@ -16,16 +16,16 @@ import (
 )
 
 type Connection struct {
-	Name        string `yaml:"name"`
-	AccessPoint string `yaml:"accessPoint"`
-	User        string `yaml:"user"`
-	Password    string `yaml:"password"`
+	Name     string `yaml:"name"`
+	Host     string `yaml:"host"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
 }
 
 type Connections []Connection
 
 func (c *Connection) Connect() {
-	session, err := connect(c.User, c.Password, c.AccessPoint, 22)
+	session, err := connect(c.User, c.Password, c.Host, 22)
 	if err != nil {
 		foundation.PrintError("Failed to connect.\nReason: " + err.Error())
 	}
@@ -109,12 +109,12 @@ func connect(user, password, host string, port int) (*ssh.Session, error) {
 	return session, nil
 }
 
-func New(name, accessPoint, user, password string) *Connection {
+func New(name, host, user, password string) *Connection {
 	return &Connection{
-		Name:        name,
-		AccessPoint: accessPoint,
-		User:        user,
-		Password:    password,
+		Name:     name,
+		Host:     host,
+		User:     user,
+		Password: password,
 	}
 }
 
@@ -168,13 +168,13 @@ func (cs *Connections) Update(name string) {
 	for key, conn := range conns {
 		if conn.Name == name {
 			// 更新内容をプロンプトで取得
-			var accessPoint = prompter.Prompt("AccessPoint", conn.AccessPoint)
+			var host = prompter.Prompt("Host", conn.Host)
 			var user = prompter.Prompt("User", conn.User)
 			var password = prompter.Password("Password")
 			if password == "" {
 				password = conn.Password
 			}
-			conns[key].AccessPoint = accessPoint
+			conns[key].Host = host
 			conns[key].User = user
 			conns[key].Password = password
 

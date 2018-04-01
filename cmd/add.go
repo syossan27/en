@@ -25,10 +25,10 @@ func AddAction(ctx *cli.Context) {
 	name := args[0]
 
 	// プロンプトで取得
-	accessPoint, user, password := input()
+	host, user, password := input()
 
 	// コネクション構造体の作成
-	conn := connection.New(name, accessPoint, user, password)
+	conn := connection.New(name, host, user, password)
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
 	conns := connection.Load()
@@ -40,9 +40,9 @@ func AddAction(ctx *cli.Context) {
 }
 
 func input() (string, string, string) {
-	var accessPoint = prompter.Prompt("AccessPoint", "")
-	if accessPoint == "" {
-		foundation.PrintError("Invalid AccessPoint")
+	var host = prompter.Prompt("Host", "")
+	if host == "" {
+		foundation.PrintError("Invalid Host")
 	}
 
 	var user = prompter.Prompt("User", "")
@@ -55,5 +55,5 @@ func input() (string, string, string) {
 		foundation.PrintError("Invalid Password")
 	}
 
-	return accessPoint, user, password
+	return host, user, password
 }

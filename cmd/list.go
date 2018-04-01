@@ -29,7 +29,7 @@ func ListAction(ctx *cli.Context) {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Name", "AccessPoint", "User", "Password"})
+	table.SetHeader([]string{"Name", "Host", "User", "Password"})
 
 	for _, conn := range connections {
 		if conn.Name == "" {
@@ -38,7 +38,7 @@ func ListAction(ctx *cli.Context) {
 
 		table.Append([]string{
 			conn.Name,
-			conn.AccessPoint,
+			conn.Host,
 			conn.User,
 			conn.Password,
 		})
