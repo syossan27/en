@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/Songmu/prompter"
 	"github.com/syossan27/en/foundation"
 
 	"golang.org/x/crypto/ssh"
@@ -131,7 +130,7 @@ func Load() Connections {
 
 	// 保存ファイル内容が空の場合
 	if len(p) == 0 {
-		return Connections{}
+		return nil
 	}
 
 	// 内容を復号
@@ -150,14 +149,20 @@ func Load() Connections {
 	return cs
 }
 
-func (cs *Connections) Add(c *Connection) {
+func (cs *Connections) Add(name string) {
 	// 同じコネクション名があった場合、エラー
-	if cs.Exist(c.Name) {
+	if cs.Exist(name) {
 		foundation.PrintError("Connection name already exists")
 	}
 
+	// プロンプトで取得
+	host, user, password := foundation.AddPrompt()
+
+	// コネクション構造体の作成
+	conn := New(name, host, user, password)
+
 	// コネクション構造体群にコネクション構造体を追加
-	*cs = append(*cs, *c)
+	*cs = append(*cs, *conn)
 
 	save(cs)
 }
@@ -167,17 +172,7 @@ func (cs *Connections) Update(name string) {
 	conns := *cs
 	for key, conn := range conns {
 		if conn.Name == name {
-			// 更新内容をプロンプトで取得
-			var host = prompter.Prompt("Host", conn.Host)
-			var user = prompter.Prompt("User", conn.User)
-			var password = prompter.Password("Password")
-			if password == "" {
-				password = conn.Password
-			}
-			conns[key].Host = host
-			conns[key].User = user
-			conns[key].Password = password
-
+			conns[key].Host, conns[key].User, conns[key].Password = foundation.UpdatePrompt(conn.Host, conn.User, conn.Password)
 			break
 		}
 	}
@@ -187,7 +182,8 @@ func (cs *Connections) Update(name string) {
 
 func (cs *Connections) Delete(name string) {
 	// 削除済みのコネクション構造体群を作成
-	newConns := make(Connections, len(*cs)-1)
+	// newConns := make(Connections, len(*cs)-1)
+	var newConns Connections
 	for _, conn := range *cs {
 		if conn.Name != name {
 			newConns = append(newConns, conn)

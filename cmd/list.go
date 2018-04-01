@@ -22,16 +22,16 @@ func ListAction(ctx *cli.Context) {
 	validation.ExistConfig()
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	connections := connection.Load()
+	conns := connection.Load()
 
-	if len(connections) == 0 {
+	if conns == nil || len(conns) == 0 {
 		foundation.PrintError("No connection")
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Name", "Host", "User", "Password"})
 
-	for _, conn := range connections {
+	for _, conn := range conns {
 		if conn.Name == "" {
 			continue
 		}
