@@ -1,12 +1,11 @@
 package cmd
 
 import (
-	"log"
 	"os"
 
-	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 	"github.com/syossan27/en/connection"
+	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
 	"github.com/urfave/cli"
 )
@@ -23,14 +22,10 @@ func ListAction(ctx *cli.Context) {
 	validation.ExistConfig()
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	connections, err := connection.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
+	connections := connection.Load()
 
 	if len(connections) == 0 {
-		color.Red("No connection")
-		return
+		foundation.PrintError("No connection")
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)

@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"log"
-
-	"github.com/fatih/color"
 	"github.com/syossan27/en/connection"
+	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
 	"github.com/urfave/cli"
 )
@@ -26,12 +24,14 @@ func DeleteAction(ctx *cli.Context) {
 	name := args[0]
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	conns, err := connection.Load()
-	if err != nil {
-		log.Fatal(err)
+	conns := connection.Load()
+
+	// コネクション構造体群の中に更新対象のコネクションがあるか確認
+	if !conns.Exist(name) {
+		foundation.PrintError("Not found specified connection name")
 	}
 
 	conns.Delete(name)
 
-	color.Green("Delete Successful!")
+	foundation.PrintSuccess("Delete Successful")
 }

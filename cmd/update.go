@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"log"
-
-	"github.com/fatih/color"
 	"github.com/syossan27/en/connection"
+	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
 	"github.com/urfave/cli"
 )
@@ -26,16 +24,10 @@ func UpdateAction(ctx *cli.Context) {
 	name := args[0]
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	conns, err := connection.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
+	conns := connection.Load()
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
-	err = conns.Update(name)
-	if err != nil {
-		log.Fatal(err)
-	}
+	conns.Update(name)
 
-	color.Green("Update Successful!")
+	foundation.PrintSuccess("Update Successful")
 }

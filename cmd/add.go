@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/Songmu/prompter"
-	"github.com/labstack/gommon/log"
 	"github.com/syossan27/en/connection"
 	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
@@ -32,16 +31,12 @@ func AddAction(ctx *cli.Context) {
 	conn := connection.New(name, accessPoint, user, password)
 
 	// 保存ファイルの中身を復号し、コネクション構造体群を取得
-	conns, err := connection.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
+	conns := connection.Load()
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
-	err = conns.Add(conn)
-	if err != nil {
-		log.Fatal(err)
-	}
+	conns.Add(conn)
+
+	foundation.PrintSuccess("Add Successful")
 }
 
 func input() (string, string, string) {

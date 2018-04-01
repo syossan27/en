@@ -1,7 +1,6 @@
 package connection
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -120,51 +119,50 @@ func New(name, accessPoint, user, password string) *Connection {
 }
 
 // 保存ファイルから復号して内容を返す
-func Load() (Connections, error) {
+func Load() Connections {
 	// キーファイル（.ssh/id_rsa）からAESキー取得
 	key := foundation.GetKey(foundation.KeyPath)
 
 	// 保存ファイルから内容を取得
 	p, err := ioutil.ReadFile(foundation.StorePath)
 	if err != nil {
-		return nil, err
+		foundation.PrintError("Failed read store file")
 	}
 
 	// 保存ファイル内容が空の場合
 	if len(p) == 0 {
-		return Connections{}, nil
+		return Connections{}
 	}
 
 	// 内容を復号
 	dec, err := foundation.Decrypt(key, string(p))
 	if err != nil {
-		return nil, err
+		foundation.PrintError("Failed decrypt connections")
 	}
 
 	// 復号した内容をyaml化
 	var cs Connections
 	err = yaml.Unmarshal(dec, &cs)
 	if err != nil {
-		return nil, err
+		foundation.PrintError("Failed unmarshal connections yaml")
 	}
 
-	return cs, nil
+	return cs
 }
 
-func (cs *Connections) Add(c *Connection) error {
+func (cs *Connections) Add(c *Connection) {
 	// 同じコネクション名があった場合、エラー
 	if cs.Exist(c.Name) {
-		return errors.New("connection name already exists")
+		foundation.PrintError("Connection name already exists")
 	}
 
 	// コネクション構造体群にコネクション構造体を追加
 	*cs = append(*cs, *c)
 
-	err := save(cs)
-	return err
+	save(cs)
 }
 
-func (cs *Connections) Update(name string) error {
+func (cs *Connections) Update(name string) {
 	// コネクション構造体群の中に更新対象のコネクションがあるか確認
 	conns := *cs
 	for key, conn := range conns {
@@ -184,12 +182,11 @@ func (cs *Connections) Update(name string) error {
 		}
 	}
 
-	err := save(&conns)
-	return err
+	save(&conns)
 }
 
-func (cs *Connections) Delete(name string) error {
-	// コネクション構造体群の中に更新対象のコネクションがあるか確認
+func (cs *Connections) Delete(name string) {
+	// 削除済みのコネクション構造体群を作成
 	newConns := make(Connections, len(*cs)-1)
 	for _, conn := range *cs {
 		if conn.Name != name {
@@ -198,12 +195,7 @@ func (cs *Connections) Delete(name string) error {
 	}
 
 	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
-	err := save(&newConns)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return err
+	save(&newConns)
 }
 
 // 同じコネクション名があるか確認
@@ -229,30 +221,32 @@ func (cs Connections) Find(name string) Connection {
 	return specifiedConn
 }
 
-func save(cs *Connections) error {
+func save(cs *Connections) {
 	// キーファイル（.ssh/id_rsa）からAESキー取得
 	key := foundation.GetKey(foundation.KeyPath)
 
 	// 保存ファイルを開く
 	f, err := os.Create(foundation.StorePath)
 	if err != nil {
-		return err
+		foundation.PrintError("Failed open store file")
 	}
 	defer f.Close()
 
 	// yaml化
 	p, err := yaml.Marshal(cs)
 	if err != nil {
-		return err
+		foundation.PrintError("Failed marshal connections yaml")
 	}
 
 	// yaml化したコネクション構造体群を暗号化
 	enc, err := foundation.Encrypt(key, p)
 	if err != nil {
-		return err
+		foundation.PrintError("Failed encrypt connections")
 	}
 
 	// 保存ファイルに書き込み
-	f.WriteString(enc)
-	return nil
+	_, err = f.WriteString(enc)
+	if err != nil {
+		foundation.PrintError("Failed write string to store file")
+	}
 }
