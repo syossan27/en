@@ -204,7 +204,7 @@ func (cs *Connections) List() {
 			conn.Name,
 			conn.Host,
 			conn.User,
-			conn.Password,
+			conn.Password[:1] + "*****",
 		})
 	}
 
