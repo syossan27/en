@@ -200,10 +200,6 @@ func (cs *Connections) List() {
 	table.SetHeader([]string{"Name", "Host", "User", "Password"})
 
 	for _, conn := range *cs {
-		if conn.Name == "" {
-			continue
-		}
-
 		table.Append([]string{
 			conn.Name,
 			conn.Host,
