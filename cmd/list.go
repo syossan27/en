@@ -18,9 +18,7 @@ func List() cli.Command {
 func ListAction(ctx *cli.Context) {
 	validation.ExistConfig()
 
-	// 保存ファイルの中身を復号し、コネクション構造体群を取得
 	conns := connection.Load()
-
 	if conns == nil || len(conns) == 0 {
 		foundation.PrintError("No connection")
 	}

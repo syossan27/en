@@ -9,15 +9,11 @@ import (
 func Connect(ctx *cli.Context) {
 	validation.ExistConfig()
 
-	// 引数の確認
 	args := ctx.Args()
 	validation.ValidateArgs(args)
 	name := args[0]
 
-	// 保存ファイルの中身を復号し、コネクション構造体群を取得
 	conns := connection.Load()
-
-	// コネクションを探して接続
 	FoundConn := conns.Find(name)
 	FoundConn.Connect()
 }

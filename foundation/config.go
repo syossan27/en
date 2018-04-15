@@ -13,7 +13,6 @@ var (
 	KeyPath       = homeDir + "/.ssh/id_rsa"
 )
 
-// ディレクトリ・ファイルの存在確認をし、なければ作成
 func MakeConfig() {
 	if _, err := os.Stat(ConfigDirPath); err != nil {
 		err := os.Mkdir(ConfigDirPath, 0777)

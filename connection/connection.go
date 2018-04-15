@@ -31,8 +31,7 @@ func (c *Connection) Connect() {
 	}
 	defer session.Close()
 
-	// ターミナルの標準入力ファイルディスクリプタを
-	// 一時的にterminalに準拠させる
+	// Terminal connected to file descriptor into raw mode
 	fd := int(os.Stdin.Fd())
 	oldState, err := terminal.MakeRaw(fd)
 	if err != nil {
@@ -40,7 +39,7 @@ func (c *Connection) Connect() {
 	}
 	defer terminal.Restore(fd, oldState)
 
-	// excute command
+	// Execute command
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 	session.Stdin = os.Stdin
@@ -83,7 +82,8 @@ func connect(user, password, host string, port int) (*ssh.Session, error) {
 		session      *ssh.Session
 		err          error
 	)
-	// get auth method
+
+	// Get auth method
 	auth = make([]ssh.AuthMethod, 0)
 	auth = append(auth, ssh.Password(password))
 
@@ -94,14 +94,11 @@ func connect(user, password, host string, port int) (*ssh.Session, error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
-	// connet to ssh
+	// Create session
 	addr = fmt.Sprintf("%s:%d", host, port)
-
 	if client, err = ssh.Dial("tcp", addr, clientConfig); err != nil {
 		return nil, err
 	}
-
-	// create session
 	if session, err = client.NewSession(); err != nil {
 		return nil, err
 	}
@@ -118,29 +115,28 @@ func New(name, host, user, password string) *Connection {
 	}
 }
 
-// 保存ファイルから復号して内容を返す
+// Load connections
 func Load() Connections {
-	// キーファイル（.ssh/id_rsa）からAESキー取得
+	// Get AES key from .ssh/id_rsa
 	key := foundation.GetKey(foundation.KeyPath)
 
-	// 保存ファイルから内容を取得
+	// Get content from store file
 	p, err := ioutil.ReadFile(foundation.StorePath)
 	if err != nil {
 		foundation.PrintError("Failed to read store file")
 	}
 
-	// 保存ファイル内容が空の場合
 	if len(p) == 0 {
 		return nil
 	}
 
-	// 内容を復号
+	// Decrypt content
 	dec, err := foundation.Decrypt(key, string(p))
 	if err != nil {
 		foundation.PrintError("Failed to decrypt connections")
 	}
 
-	// 復号した内容をyaml化
+	// Decrypted content convert into yaml
 	var cs Connections
 	err = yaml.Unmarshal(dec, &cs)
 	if err != nil {
@@ -151,25 +147,22 @@ func Load() Connections {
 }
 
 func (cs *Connections) Add(name string) {
-	// 同じコネクション名があった場合、エラー
+	// If exist same connection name is error
 	if cs.Exist(name) {
 		foundation.PrintError("Connection name already exists")
 	}
 
-	// プロンプトで取得
+	// Get connection information by prompt
 	host, user, password := foundation.AddPrompt()
 
-	// コネクション構造体の作成
+	// Save connection information to store file
 	conn := New(name, host, user, password)
-
-	// コネクション構造体群にコネクション構造体を追加
 	*cs = append(*cs, *conn)
-
 	save(cs)
 }
 
 func (cs *Connections) Update(name string) {
-	// コネクション構造体群の中に更新対象のコネクションがあるか確認
+	// Check to exist same connection name in Connections struct
 	conns := *cs
 	for key, conn := range conns {
 		if conn.Name == name {
@@ -182,16 +175,12 @@ func (cs *Connections) Update(name string) {
 }
 
 func (cs *Connections) Delete(name string) {
-	// 削除済みのコネクション構造体群を作成
-	// newConns := make(Connections, len(*cs)-1)
 	var newConns Connections
 	for _, conn := range *cs {
 		if conn.Name != name {
 			newConns = append(newConns, conn)
 		}
 	}
-
-	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
 	save(&newConns)
 }
 
@@ -211,7 +200,7 @@ func (cs *Connections) List() {
 	table.Render()
 }
 
-// 同じコネクション名があるか確認
+// Check to exist same connection name
 func (cs Connections) Exist(name string) bool {
 	for _, c := range cs {
 		if name == c.Name {
@@ -235,29 +224,29 @@ func (cs Connections) Find(name string) Connection {
 }
 
 func save(cs *Connections) {
-	// キーファイル（.ssh/id_rsa）からAESキー取得
+	// Get AES key from .ssh/id_rsa
 	key := foundation.GetKey(foundation.KeyPath)
 
-	// 保存ファイルを開く
+	// Open store file
 	f, err := os.Create(foundation.StorePath)
 	if err != nil {
 		foundation.PrintError("Failed to open store file")
 	}
 	defer f.Close()
 
-	// yaml化
+	// Convert into yaml
 	p, err := yaml.Marshal(cs)
 	if err != nil {
 		foundation.PrintError("Failed to marshal connections yaml")
 	}
 
-	// yaml化したコネクション構造体群を暗号化
+	// Encrypt the connections struct converted into yaml
 	enc, err := foundation.Encrypt(key, p)
 	if err != nil {
 		foundation.PrintError("Failed to encrypt connections")
 	}
 
-	// 保存ファイルに書き込み
+	// Write string to store file
 	_, err = f.WriteString(enc)
 	if err != nil {
 		foundation.PrintError("Failed to write string to store file")

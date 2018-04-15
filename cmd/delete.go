@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/syossan27/en/connection"
 	"github.com/syossan27/en/foundation"
 	"github.com/syossan27/en/validation"
@@ -13,24 +15,25 @@ func Delete() cli.Command {
 		Aliases: []string{"d"},
 		Usage:   "en delete [connection name]",
 		Action:  DeleteAction,
+		BashComplete: func(ctx *cli.Context) {
+			conns := connection.Load()
+			for _, conn := range conns {
+				fmt.Println(conn.Name)
+			}
+		},
 	}
 }
 func DeleteAction(ctx *cli.Context) {
 	validation.ExistConfig()
 
-	// 引数の確認
 	args := ctx.Args()
 	validation.ValidateArgs(args)
 	name := args[0]
 
-	// 保存ファイルの中身を復号し、コネクション構造体群を取得
 	conns := connection.Load()
-
-	// コネクション構造体群の中に更新対象のコネクションがあるか確認
 	if !conns.Exist(name) {
 		foundation.PrintError("Not found specified connection name")
 	}
-
 	conns.Delete(name)
 
 	foundation.PrintSuccess("Delete Successful")

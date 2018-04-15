@@ -18,15 +18,11 @@ func Add() cli.Command {
 func AddAction(ctx *cli.Context) {
 	foundation.MakeConfig()
 
-	// 引数の確認
 	args := ctx.Args()
 	validation.ValidateArgs(args)
 	name := args[0]
 
-	// 保存ファイルの中身を復号し、コネクション構造体群を取得
 	conns := connection.Load()
-
-	// コネクション構造体群に新しくコネクション構造体突っ込んで保存する
 	conns.Add(name)
 
 	foundation.PrintSuccess("Add Successful")

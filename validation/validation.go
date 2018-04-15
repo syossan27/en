@@ -17,7 +17,6 @@ func ValidateArgs(args cli.Args) {
 	}
 }
 
-// ディレクトリ・ファイルの存在確認
 func ExistConfig() {
 	if _, err := os.Stat(foundation.ConfigDirPath); err != nil {
 		foundation.PrintError("Not exist .en directory")
@@ -25,4 +24,11 @@ func ExistConfig() {
 	if _, err := os.Stat(foundation.StorePath); err != nil {
 		foundation.PrintError("Not exist store file")
 	}
+}
+
+func CheckSudo() bool {
+	if os.Getuid() != 0 {
+		return false
+	}
+	return true
 }

@@ -24,7 +24,6 @@ func AddPrompt() (string, string, string) {
 }
 
 func UpdatePrompt(host, user, password string) (string, string, string) {
-	// 更新内容をプロンプトで取得
 	h := prompter.Prompt("Host", host)
 	u := prompter.Prompt("User", user)
 	p := prompter.Password("Password")

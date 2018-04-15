@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 )
 
-// テキストをAES-256で暗号化して、base64でエンコード
+// Encrypt to text by AES-256, after that encode this by base64
 func Encrypt(key []byte, data []byte) (string, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -29,7 +29,7 @@ func Encrypt(key []byte, data []byte) (string, error) {
 	return encoded, nil
 }
 
-// AES-256で復号
+// Decrypt by AES-256
 func Decrypt(key []byte, encrypted string) ([]byte, error) {
 	data, err := base64.StdEncoding.DecodeString(encrypted)
 	if err != nil {

@@ -11,6 +11,7 @@ $ en add [ssh name]
 Host: [host]
 User: [user]
 Password: ******
+
 👍 Add Successful
 ```
 
@@ -26,6 +27,7 @@ $ en [ssh name]
 
 ```
 $ en delete [ssh name]
+
 👍 Delete Successful
 ```
 
@@ -37,12 +39,19 @@ $ en update [ssh name]
 Host(Default: [Change before host]): [host]
 User(Default: [Change before user]): [user]
 Password(Default: [Change before password]): ******
+
 👍 Update Successful
+```
+
+### Configure bash-completion
+
+```
+$ sudo en bash-completion [ssh config file path (ex. ~/.bashrc)]
+
+👍 Configure bash_complete Successful
+Please run `source [ssh config file path]`
 ```
 
 ## LoadMap
 
-- 設定ファイル扱いたい
-  - 設定ファイル読み込み先
-- 公開鍵認証に対応
-- 接続先の入力補完機能
+- [ ] Public key authentication
