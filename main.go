@@ -9,8 +9,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-var commands = []string{"add", "update", "delete", "list"}
-
 func main() {
 	app := makeApp()
 	app.Run(os.Args)
@@ -24,9 +22,6 @@ func makeApp() *cli.App {
 	app.EnableBashCompletion = true
 	app.BashComplete = func(ctx *cli.Context) {
 		conns := connection.Load()
-		for _, command := range commands {
-			fmt.Println(command)
-		}
 		for _, conn := range conns {
 			fmt.Println(conn.Name)
 		}
