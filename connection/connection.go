@@ -68,8 +68,8 @@ func (c *Connection) Connect() {
 
 	err = session.Wait()
 	if err != nil {
+		terminal.Restore(fd, oldState)
 		foundation.PrintError("Failed to command completes successfully")
-
 	}
 }
 
